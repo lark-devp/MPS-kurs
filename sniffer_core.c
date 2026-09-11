@@ -27,17 +27,14 @@ typedef struct {
 } oui_entry_t;
 
 static const oui_entry_t OUI_DATABASE[] = {
-    {{0x24, 0x0A, 0xC4}, "Espressif"},
     {{0xF0, 0x18, 0x98}, "Apple"},
     {{0xAC, 0xBC, 0x32}, "Apple"},
     {{0xA8, 0x9C, 0xED}, "Samsung"},
     {{0x5C, 0xE8, 0xEB}, "Samsung"},
     {{0x64, 0x09, 0x80}, "Xiaomi"},
-    {{0x20, 0xF4, 0x78}, "Huawei"},
-    {{0x0C, 0x0E, 0x76}, "TP-Link"},
-    {{0x00, 0x18, 0xE7}, "Keenetic"},
-    {{0x2C, 0xAB, 0x25}, "MikroTik"},
-    {{0x00, 0x1B, 0x77}, "Intel"}
+    {{0x88, 0x6C, 0x60}, "Xiaomi"},
+    {{0xD8, 0x45, 0x67}, "Tecno"},
+    {{0x38, 0xD5, 0x7A}, "Cloud NT"}
 };
 #define OUI_DB_SIZE (sizeof(OUI_DATABASE) / sizeof(oui_entry_t))
 
@@ -112,11 +109,6 @@ static void sniffer_cb(void* buf, wifi_promiscuous_pkt_type_t type) {
     uint16_t length = pkt->rx_ctrl.sig_len;
     uint8_t frame_type = payload[0];
 
-    if (frame_type == 0xC0 || frame_type == 0xA0) {
-        deauth_count++;
-        return;
-    }
-
     uint8_t *src_mac = &payload[10];
 
     if (frame_type == 0x80) { // Beacon
@@ -127,7 +119,6 @@ static void sniffer_cb(void* buf, wifi_promiscuous_pkt_type_t type) {
         update_or_add_device(src_mac, DEVICE_CLIENT, NULL, pkt->rx_ctrl.rssi);
     }
 }
-
 void get_stats(int *routers, int *clients, int *deauth) {
     if (xSemaphoreTake(table_mutex, pdMS_TO_TICKS(50)) == pdTRUE) {
         *routers = 0;
@@ -165,7 +156,7 @@ void init_sniffer_system(void) {
     ESP_ERROR_CHECK(esp_wifi_start());
 
     wifi_promiscuous_filter_t filter = {
-        .filter_mask = WIFI_PROMIS_FILTER_MASK_MGMT | WIFI_PROMIS_FILTER_MASK_CTRL
+        .filter_mask = WIFI_PROMIS_FILTER_MASK_MGMT 
     };
     ESP_ERROR_CHECK(esp_wifi_set_promiscuous_filter(&filter));
     ESP_ERROR_CHECK(esp_wifi_set_promiscuous_rx_cb(&sniffer_cb));
