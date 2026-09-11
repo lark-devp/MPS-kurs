@@ -148,19 +148,18 @@ void lcd_menu_task(void *pvParameter) {
             force_redraw = false;
 
             // Экран 0: Статистика
-            if (current_screen == 0) {
-                lcd_set_cursor(0, 0); lcd_print("=== ESP32 SNIFFER ==");
-                snprintf(buf, sizeof(buf), "Routers: %-11d", r);
-                lcd_set_cursor(0, 1); lcd_print(buf);
-                snprintf(buf, sizeof(buf), "Clients: %-11d", c);
-                lcd_set_cursor(0, 2); lcd_print(buf);
-                snprintf(buf, sizeof(buf), "DEAUTH : %-11d", d);
-                lcd_set_cursor(0, 3); lcd_print(buf);
-            }
+		if (current_screen == 0) {
+    		lcd_set_cursor(0, 0); lcd_print("    ESP32 SNIFFER    "); 
+    		lcd_set_cursor(0, 1); lcd_print("                    "); 
+    		snprintf(buf, sizeof(buf), "Routers: %-11d", r);
+    		lcd_set_cursor(0, 2); lcd_print(buf);
+    		snprintf(buf, sizeof(buf), "Clients: %-11d", c);
+    		lcd_set_cursor(0, 3); lcd_print(buf);
+		}
             // Страницы роутеров
             else if (current_screen <= r_pages) {
                 int r_page = current_screen - 1;
-                snprintf(buf, sizeof(buf), "-- ROUTERS (%d/%d) --", r_page + 1, r_pages);
+                snprintf(buf, sizeof(buf), "   ROUTERS (%d/%d)   ", r_page + 1, r_pages);
                 lcd_set_cursor(0, 0); lcd_print(buf);
 
                 int skip = r_page * 3;
@@ -185,7 +184,7 @@ void lcd_menu_task(void *pvParameter) {
             // Страницы клиентов
             else {
                 int c_page = current_screen - 1 - r_pages;
-                snprintf(buf, sizeof(buf), "-- CLIENTS (%d/%d) --", c_page + 1, c_pages);
+                snprintf(buf, sizeof(buf), "   CLIENTS (%d/%d)   ", c_page + 1, c_pages);
                 lcd_set_cursor(0, 0); lcd_print(buf);
 
                 int skip = c_page * 3;
